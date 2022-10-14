@@ -1,5 +1,6 @@
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 import React from "react";
+import { Link } from "react-router-dom";
 const Login = () => {
   return (
     <div>
@@ -32,8 +33,16 @@ const Login = () => {
             <Checkbox id="remember" />
             <Label htmlFor="remember">Remember me</Label>
           </div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Login</Button>
         </form>
+        <div className="text-center mt-3">
+          <p>
+            Not have a account ?{" "}
+            <span className="underline-offset-4 text-blue-600 underline">
+              <Link to="/register">Register Here</Link>
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );
