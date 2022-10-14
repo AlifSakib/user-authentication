@@ -1,4 +1,8 @@
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendEmailVerification,
+} from "firebase/auth";
 import { Button, Label, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -6,6 +10,7 @@ import app from "../firebase/firebase.init";
 const auth = getAuth(app);
 const Register = () => {
   const [errorPass, setErrorPass] = useState("");
+  const [success, setSuccess] = useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -32,12 +37,26 @@ const Register = () => {
       setErrorPass("Password length should be more theb 8 character");
       return;
     }
-    setErrorPass("");
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((result) => {
         const user = result.user;
         console.log(user);
+        setSuccess(true);
+        form.reset();
+        verifyEmail();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    setErrorPass("");
+  };
+
+  const verifyEmail = () => {
+    sendEmailVerification(auth.currentUser)
+      .then(() => {
+        alert("Varification email send to your email");
       })
       .catch((error) => {
         console.error(error);
@@ -74,6 +93,7 @@ const Register = () => {
 
           <div className="flex items-center gap-2 text-red-600 ">
             <p>{errorPass}</p>
+            {success && <p>Registration Successfull</p>}
           </div>
           <Button type="submit">Registration</Button>
         </form>

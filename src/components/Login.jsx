@@ -1,11 +1,29 @@
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 import React from "react";
 import { Link } from "react-router-dom";
+import app from "../firebase/firebase.init";
 const Login = () => {
+  const auth = getAuth(app);
+  const handleSignIn = (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const email = form.email.value;
+    const password = form.password.value;
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   return (
     <div>
       <div>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSignIn}>
           <div>
             <div className="mb-2 block">
               <Label htmlFor="email1" value="Your email" />
