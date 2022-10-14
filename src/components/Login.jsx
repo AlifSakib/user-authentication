@@ -1,4 +1,8 @@
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { Button, Label, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -7,6 +11,7 @@ import app from "../firebase/firebase.init";
 const Login = () => {
   const auth = getAuth(app);
   const [login, setLogin] = useState(false);
+  const [email, setEmail] = useState("");
   const handleSignIn = (event) => {
     event.preventDefault();
     setLogin(false);
@@ -17,7 +22,7 @@ const Login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
         const user = result.user;
-        console.log(user);
+
         setLogin(true);
         toast("Login Success", { autoClose: 1000 });
         form.reset();
@@ -26,6 +31,21 @@ const Login = () => {
         console.error(error);
         toast.error("Login Faild", { autoClose: 1000 });
       });
+  };
+
+  const handleBlur = (event) => {
+    const email = event.target.value;
+    setEmail(email);
+  };
+
+  const forgetPass = () => {
+    if (!email) {
+      toast.info("Enter You email to reset password", { autoClose: 1000 });
+    } else {
+      sendPasswordResetEmail(auth, email).then(() => {
+        toast.success("Password Reset Email Sent", { autoClose: 1000 });
+      });
+    }
   };
   return (
     <div>
@@ -36,6 +56,7 @@ const Login = () => {
               <Label htmlFor="email1" value="Your email" />
             </div>
             <TextInput
+              onBlur={handleBlur}
               id="email1"
               type="email"
               name="email"
@@ -66,6 +87,14 @@ const Login = () => {
             Not have a account ?{" "}
             <span className="underline-offset-4 text-blue-600 underline">
               <Link to="/register">Register Here</Link>
+            </span>
+          </p>
+        </div>
+        <div className="text-center mt-3">
+          <p>
+            Forget Password ?{" "}
+            <span className="underline-offset-4 text-blue-600 underline">
+              <button onClick={forgetPass}>Click Here</button>
             </span>
           </p>
         </div>
