@@ -1,12 +1,15 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { Button, Checkbox, Label, TextInput } from "flowbite-react";
-import React from "react";
+import { Button, Label, TextInput } from "flowbite-react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import app from "../firebase/firebase.init";
 const Login = () => {
   const auth = getAuth(app);
+  const [login, setLogin] = useState(false);
   const handleSignIn = (event) => {
     event.preventDefault();
+    setLogin(false);
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
@@ -15,9 +18,13 @@ const Login = () => {
       .then((result) => {
         const user = result.user;
         console.log(user);
+        setLogin(true);
+        toast("Login Success", { autoClose: 1000 });
+        form.reset();
       })
       .catch((error) => {
         console.error(error);
+        toast.error("Login Faild", { autoClose: 1000 });
       });
   };
   return (
@@ -47,10 +54,11 @@ const Login = () => {
               required={true}
             />
           </div>
-          <div className="flex items-center gap-2">
-            <Checkbox id="remember" />
-            <Label htmlFor="remember">Remember me</Label>
-          </div>
+          {login && (
+            <div className="flex items-center gap-2 ">
+              <p className="text-green-400">Login Success</p>
+            </div>
+          )}
           <Button type="submit">Login</Button>
         </form>
         <div className="text-center mt-3">
